@@ -1,15 +1,20 @@
-# from model.game import game
-# from model.board import board
+from model.game import Game
+from view.gameView import GameView
+from model.human import Human
 
 
 class GameCtrl():
-    pass
 
+    def __init__(self):
+        self.game = None
+        self.setup_game()
+        self.view = GameView()
 
-    #     @classmethod
-    # def get_players(cls):
-    #     cls.player_1 = Human('Amiga', 'X', cls.board)
-    #     cls.players.append(cls.player_1)
-    #     cls.player_2 = Human('PC', 'O', cls.board)
-    #     cls.players.append(cls.player_2)
+    def setup_game(self):
 
+        player1 = Human('Amiga', 'X')
+        player2 = Human('PC', 'O')
+        self.game = Game(player1, player2)
+
+    def execute_game_loop(self):
+        self.view.display_game(self.game)

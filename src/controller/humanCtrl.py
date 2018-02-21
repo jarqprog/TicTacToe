@@ -15,7 +15,3 @@ class HumanCtrl(PlayerCtrl):
         """Return attacked field number (in range 1 - 9)."""
         pass
         # implement different methods for human / AI player
-
-
-board = Board()
-player = Human("A", "O", board)
