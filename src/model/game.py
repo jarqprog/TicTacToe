@@ -17,6 +17,9 @@ class Game():
     def get_players(self):
         return self.players
 
+    def get_board(self):
+        return self.board
+
     def __str__(self):
 
         to_display = str(self.board)

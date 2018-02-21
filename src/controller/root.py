@@ -1,23 +1,24 @@
-from model.human import Human
-from model.game import Game
+from .gameCtrl import GameCtrl
 
 
 class Root():
     
     def __init__(self):
         self.view = None
+        self.game_ctrl = None
 
     def run_app(self):
+        # implementation
+        # self.execute_main_menu()
 
-        player1 = Human('Amiga', 'X')
-        player2 = Human('PC', 'O')
+        self.execute_game()
 
-        print(player1)
-        print(player2)
-
-        game = Game(player1, player2)
-
-        print(game)
-
-    def main_menu(self):
+    def execute_main_menu(self):
         pass
+
+    def execute_game(self):
+        self.game_ctrl = GameCtrl()
+        self.game_ctrl.setup_game()
+        self.game_ctrl.execute_game_loop()
+
+        
