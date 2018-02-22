@@ -33,9 +33,9 @@ class Board():
     def __str__(self):
         board = """\n
                  {} | {} | {}
-                -----------------
+                -----------
                  {} | {} | {}
-                -----------------
+                -----------
                  {} | {} | {}
                 \n""".format(
                             self.fields[0], self.fields[1], self.fields[2],

@@ -1,15 +1,16 @@
 """Contains square class - represents single field in game."""
 
+
 class Field():
 
     def __init__(self, sign):
-        self.symbol = ' {} '.format(sign)
+        self.symbol = '{}'.format(sign)
 
     def set_to_X(self):
-        self.symbol = " X "
+        self.symbol = "X"
 
     def set_to_O(self):
-        self.symbol = " O "
+        self.symbol = "O"
 
     def get_symbol(self):
         return self.symbol

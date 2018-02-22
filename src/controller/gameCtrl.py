@@ -10,7 +10,6 @@ class GameCtrl():
         self.setup_game()
         self.player_1 = self.game.get_players()[0]
         self.player_2 = self.game.get_players()[1]
-        self.board = self.game.get_board()
         self.view = GameView()
 
     def setup_game(self):
@@ -22,26 +21,33 @@ class GameCtrl():
         self.game = Game(player1, player2)
 
     def execute_game_loop(self):
-        
+
         # temporary
-
-        self.show_game()
         self.show_board()
-        self.game.get_board().change_field_to_O(1)
-        self.game.get_board().change_field_to_X(9)
-        self.show_game()
-        self.game.get_board().change_field_to_O(2)
-        self.show_game()
+        self.game.get_board().change_field_to_X(1)
+        has_won = self.check_if_won(self.player_1.get_symbol())
+        print(str(has_won))
 
-        self.game.get_board().change_field_to_O(2)
-        winner_sign = self.get_winner_if_game_is_solved()
-        self.show_game()
-        print(winner_sign)
+        self.show_board()
+        self.game.get_board().change_field_to_X(2)
+        has_won = self.check_if_won(self.player_1.get_symbol())
+        print(str(has_won))
 
-        self.game.get_board().change_field_to_O(3)
-        winner_sign = self.get_winner_if_game_is_solved()
-        self.show_game()
-        print(winner_sign)
+        self.show_board()
+        self.game.get_board().change_field_to_X(4)
+        has_won = self.check_if_won(self.player_1.get_symbol())
+        print(str(has_won))
+
+        self.show_board()
+        self.game.get_board().change_field_to_X(3)
+        has_won = self.check_if_won(self.player_1.get_symbol())
+        print(str(has_won))
+
+        # self.show_game()
+
+
+
+        ###
 
     def show_board(self):
         self.view.display_board(self.game.get_board())
@@ -49,41 +55,28 @@ class GameCtrl():
     def show_game(self):
         self.view.display_game(self.game)
 
-    def get_winner_if_game_is_solved(self):
-        """Return winner sign or "draw" if draw or "continue" if game is not solved."""
+    def check_if_won(self, player_symbol):
+        # player_symbol = x or o
+        _board = [str(field) for field in self.game.get_board().get_fields()]
+        print("fields: ", _board)
+        _win_combination = [player_symbol, player_symbol, player_symbol]
+        print(player_symbol)
+        self.view.execute_pause()
+        sublist_len = 3
+        _to_check = [_board[x:x+sublist_len] for x in (0, 3, 6)]
+        _to_check += [
+                    [_board[x-1] for x in (1, 4, 7)],
+                    [_board[x-1] for x in (2, 5, 8)],
+                    [_board[x-1] for x in (3, 6, 9)],
+                    [_board[x-1] for x in (1, 5, 9)],
+                    [_board[x-1] for x in (3, 5, 6)]]
 
-        player_1_symbol = self.player_1.get_symbol()
-        player_2_symbol = self.player_2.get_symbol()
+        for lista in _to_check:
+            print(str(lista))
 
-        symbols = [player_1_symbol, player_2_symbol]
-        board = sum(self.board, [])
-        for symbol in symbols:
-            to_compare = [symbol, symbol, symbol]
-            win_horizontal = False
-            win_vertical = False
-            win_aslant = False
-            verticals = [
-                        [board[n-1] for n in (1, 4, 7)],
-                        [board[n-1] for n in (2, 5, 8)],
-                        [board[n-1] for n in (3, 6, 9)]]
-            aslants = [
-                        [board[n-1] for n in (1, 5, 9)],
-                        [board[n-1] for n in (3, 5, 7)]]
-            for raw in board:
-                if raw == to_compare:
-                    win_horizontal = True
-            for raw in verticals:
-                if raw == to_compare:
-                    win_vertical = True
-            for combi in aslants:
-                if combi == to_compare:
-                    win_aslant = True
-            if win_horizontal or win_vertical or win_aslant:
-                return symbol  # someone've won ("X" or "O")
-        is_draw = True
-        for square in board:
-            if square.isdigit():
-                is_draw = False
-        if is_draw:
-            return "draw"
-        return "continue"
+        for combination in _to_check:
+            print(combination, "bool ", str(combination == _win_combination))
+            if combination == _win_combination:
+                return True
+
+        return False
