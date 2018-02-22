@@ -8,9 +8,16 @@ class GameCtrl():
     def __init__(self):
         self.game = None
         self.setup_game()
-        self.player_1 = self.game.get_players()[0]
-        self.player_2 = self.game.get_players()[1]
         self.view = GameView()
+
+    def get_board(self):
+        return self.game.get_board()
+
+    def get_player_1(self):
+        return self.game.get_players()[0]
+
+    def get_player_2(self):
+        return self.game.get_players()[1]
 
     def setup_game(self):
 
@@ -23,41 +30,49 @@ class GameCtrl():
     def execute_game_loop(self):
 
         # temporary
+
+
+        #####################
+
         self.show_board()
         self.game.get_board().change_field_to_X(1)
-        has_won = self.check_if_won(self.player_1.get_symbol())
+        has_won = self.check_if_won(self.get_player_1().get_symbol())
         print(str(has_won))
 
         self.show_board()
         self.game.get_board().change_field_to_X(2)
-        has_won = self.check_if_won(self.player_1.get_symbol())
+        has_won = self.check_if_won(self.get_player_1().get_symbol())
         print(str(has_won))
 
         self.show_board()
         self.game.get_board().change_field_to_X(4)
-        has_won = self.check_if_won(self.player_1.get_symbol())
+        has_won = self.check_if_won(self.get_player_1().get_symbol())
         print(str(has_won))
 
         self.show_board()
         self.game.get_board().change_field_to_X(3)
-        has_won = self.check_if_won(self.player_1.get_symbol())
+        has_won = self.check_if_won(self.get_player_1().get_symbol())
         print(str(has_won))
+
+        # prinet
 
         self.show_board()
 
         self.game.get_board().change_field_to_X(5)
         self.game.get_board().change_field_to_X(6)
         self.game.get_board().change_field_to_X(7)
-        is_draw = self.check_if_draw()
-        print("draw:", str(is_draw))
+        is_draw = self.check_if_is_any_free_field()
+        print("is free field::", str(is_draw))
         self.game.get_board().change_field_to_X(8)
-        is_draw = self.check_if_draw()
-        print("draw:", str(is_draw))
+        is_draw = self.check_if_is_any_free_field()
+        print("is free field::", str(is_draw))
         self.show_board()
         self.game.get_board().change_field_to_X(9)
-        is_draw = self.check_if_draw()
+        is_draw = self.check_if_is_any_free_field()
         self.show_board()
-        print("draw:", str(is_draw))
+        print("is free field:", str(is_draw))
+
+        #####################
 
     def show_board(self):
         self.view.display_board(self.game.get_board())
@@ -91,10 +106,10 @@ class GameCtrl():
 
         return False
 
-    def check_if_draw(self):
+    def check_if_is_any_free_field(self):
 
         _board = [str(field) for field in self.game.get_board().get_fields()]
         for field in _board:
             if field.isdigit():
-                return False
-        return True
+                return True
+        return False
