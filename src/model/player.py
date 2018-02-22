@@ -1,17 +1,13 @@
 from abc import ABC, abstractmethod
-from exception.customException import CustomException
 
 
 class Player(ABC):
     """Abstract class!"""
 
     @abstractmethod
-    def __init__(self, name, symbol):
+    def __init__(self, name):
         self.name = name
-        if symbol not in ("x", "o"):
-            raise CustomException("wrong symbol! (symbol should be 'x' or 'o')")
-
-        self.symbol = symbol
+        self.symbol = "-"
         self.shots = []  # contains attacked squares, eg. [1, 3, 4, 5]
 
     def __str__(self):
@@ -19,6 +15,9 @@ class Player(ABC):
 
     def get_name(self):
         return self.name
+
+    def set_symbol(self, symbol):
+        self.symbol = symbol
 
     def get_symbol(self):
         return self.symbol

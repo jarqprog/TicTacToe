@@ -1,13 +1,13 @@
 from .playerCtrl import PlayerCtrl
 from view.playerView import PlayerView
 from exception.customException import CustomException
-from model.human import Human
+from model.ai import Ai
 
 
-class HumanCtrl(PlayerCtrl):
+class AiCtrl(PlayerCtrl):
 
     def __init__(self, player, board):
-        if not isinstance(player, Human):
+        if not isinstance(player, Ai):
             raise CustomException("wrong type!")
         super().__init__(player, board)
         self.view = PlayerView()
@@ -17,8 +17,7 @@ class HumanCtrl(PlayerCtrl):
 
     def shoot(self):
         """Return attacked field number (in range 1 - 9)."""
-        symbol = self.player.get_symbol()
         fields = self.board.get_fields()
         correct_choices = [str(field) for field in fields if field not in ("x", "o")]
         field_index = int(self.view.get_field_number_to_shoot(correct_choices))
-        self.board.change_field(field_index, symbol)
+        self.board.change_field(field_index, self.symbol)
