@@ -18,7 +18,6 @@ class Root():
 
     def execute_game(self):
         self.game_ctrl = GameCtrl()
-        self.game_ctrl.setup_game()
         self.game_ctrl.execute_game_loop()
 
         

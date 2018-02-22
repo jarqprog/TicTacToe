@@ -5,8 +5,10 @@ class PlayerCtrl(ABC):
     """Abstract class!"""
 
     @abstractmethod
-    def __init__(self, player):
+    def __init__(self, player, board):
         self.player = player
+        self.board = board
+        self.symbol = self.player.get_symbol()
 
     def get_player(self):
         return self.player

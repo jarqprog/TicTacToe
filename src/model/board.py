@@ -21,11 +21,8 @@ class Board():
     def get_field_by_index(self, fields_index):
         return self.fields[fields_index-1]
 
-    def change_field_to_O(self, index):
-        self.get_field_by_index(index).set_to_O()
-
-    def change_field_to_X(self, index):
-        self.get_field_by_index(index).set_to_X()
+    def change_field(self, index, symbol):
+        self.get_field_by_index(index).set_symbol(symbol)
 
     def get_fields(self):
         return self.fields

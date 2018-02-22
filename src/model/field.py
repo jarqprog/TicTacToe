@@ -6,11 +6,8 @@ class Field():
     def __init__(self, sign):
         self.symbol = '{}'.format(sign)
 
-    def set_to_X(self):
-        self.symbol = "X"
-
-    def set_to_O(self):
-        self.symbol = "O"
+    def set_symbol(self, symbol):
+        self.symbol = symbol
 
     def get_symbol(self):
         return self.symbol

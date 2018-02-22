@@ -4,10 +4,5 @@ from .view import View
 class GameView(View):
 
     def display_board(self, board):
-        print(board)
-
-    def display_game(self, game):
-        self.clear_screen()
-        self.display_heading()
-        print(game)
-        self.execute_pause()
+        self.display_message("Game board:")
+        self.display_message(board)

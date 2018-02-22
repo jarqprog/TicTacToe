@@ -37,6 +37,9 @@ class View():
         print("{} {} {}".format(self.short_heading, self.title, self.short_heading))
         print(self.long_heading)
 
+    def display_message(self, message):
+        print(self.empty_lines + self.double_tab + message)
+
     @staticmethod
     def animate_string(speed=0.0005, string=None):
         """
@@ -52,10 +55,10 @@ class View():
             sys.stdout.flush()
             time.sleep(speed)
 
-    @staticmethod
-    def clear_screen():
+    def clear_screen(self):
         """Clear screen - universal for ubuntu/windows platform."""
         os.system('cls' if os.name == 'nt' else 'clear')
+        self.display_heading()
 
     def execute_pause(self):
         """Stop program action until user will press any key."""
