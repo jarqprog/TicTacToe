@@ -43,11 +43,21 @@ class GameCtrl():
         has_won = self.check_if_won(self.player_1.get_symbol())
         print(str(has_won))
 
-        # self.show_game()
+        self.show_board()
 
-
-
-        ###
+        self.game.get_board().change_field_to_X(5)
+        self.game.get_board().change_field_to_X(6)
+        self.game.get_board().change_field_to_X(7)
+        is_draw = self.check_if_draw()
+        print("draw:", str(is_draw))
+        self.game.get_board().change_field_to_X(8)
+        is_draw = self.check_if_draw()
+        print("draw:", str(is_draw))
+        self.show_board()
+        self.game.get_board().change_field_to_X(9)
+        is_draw = self.check_if_draw()
+        self.show_board()
+        print("draw:", str(is_draw))
 
     def show_board(self):
         self.view.display_board(self.game.get_board())
@@ -80,3 +90,11 @@ class GameCtrl():
                 return True
 
         return False
+
+    def check_if_draw(self):
+
+        _board = [str(field) for field in self.game.get_board().get_fields()]
+        for field in _board:
+            if field.isdigit():
+                return False
+        return True
