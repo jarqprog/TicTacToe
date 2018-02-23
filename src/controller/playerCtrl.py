@@ -8,14 +8,17 @@ class PlayerCtrl(ABC):
     def __init__(self, player, board):
         self.player = player
         self.board = board
-        self.symbol = self.player.get_symbol()
 
     def get_player(self):
         return self.player
 
+    def increment_score(self):
+        self.player.set_score(self.player.get_score() + 1)
+
+    def set_board(self, board):
+        self.board = board
+
     @abstractmethod
     def shoot(self):
-        """Return attacked field number (in range 1 - 9)."""
         pass
-        # implement different methods for human / AI player 
-
+        # implement different methods for human / AI player
