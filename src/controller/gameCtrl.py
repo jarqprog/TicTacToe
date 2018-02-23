@@ -58,17 +58,21 @@ class GameCtrl():
                 symbol = player.get_player().get_symbol()
                 self.__execute_game_screen()
                 player.shoot()
+                print("win ", self.checker.check_if_won(symbol))
+                print("draw: ", (not self.checker.check_if_is_any_free_field()))
                 if self.checker.check_if_won(symbol):
                     self.winner = player.get_player()
                     self.__execute_game_screen()
                     self.__execute_win_screen()
                     should_continue = False
                     break
+
                 elif not self.checker.check_if_is_any_free_field():
                     self.__execute_game_screen()
                     self.__execute_draw_screen()
                     should_continue = False
                     break
+
             self.turn_counter += 1
 
     def __execute_win_screen(self):

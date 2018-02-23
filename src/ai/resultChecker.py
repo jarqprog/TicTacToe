@@ -12,15 +12,15 @@ class ResultChecker():
                                                 (1, 2, 3), (7, 8, 9), (1, 4, 7),
                                                 (3, 6, 9), (1, 5, 9), (3, 5, 6)]
 
-    def __create_combination(self, indexes, board):
-        return [board[x-1] for x in indexes]
+    def __create_combination(self, indexes):
+        fields = self.get_fields()
+        return [fields[x-1] for x in indexes]
 
     def check_if_won(self, player_symbol):
-        board = [str(field) for field in self.board.get_fields()]
         win_combination = [player_symbol, player_symbol, player_symbol]
         to_check = []
         for indexes in self.board_indexes_collection:
-            to_check.append(self.__create_combination(indexes, board))
+            to_check.append(self.__create_combination(indexes))
 
         for combination in to_check:
             if combination == win_combination:
@@ -29,8 +29,7 @@ class ResultChecker():
         return False
 
     def check_if_is_any_free_field(self):
-        _board = [str(field) for field in self.board.get_fields()]
-        for field in _board:
+        for field in self.get_fields():
             if field.isdigit():
                 return True
 
@@ -41,3 +40,6 @@ class ResultChecker():
 
     def get_board_best_indexes_collection(self):
         return self.board_best_indexes_collection
+
+    def get_fields(self):
+        return [str(field) for field in self.board.get_fields()]
