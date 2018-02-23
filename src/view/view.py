@@ -6,7 +6,7 @@ from tool.dataTools import DataTools
 
 
 class View():
-    
+
     # import getch (avoid problem with windows/ubuntu):
     try:
         from msvcrt import getwch as getch
@@ -24,7 +24,7 @@ class View():
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
             return ch
-    
+
     def __init__(self):
         self.empty_lines = "\n\n"
         self.double_tab = "\t\t"
@@ -47,6 +47,10 @@ class View():
 
     def display_empty_lines(self):
         print(self.empty_lines)
+
+    def display_short_belt(self):
+        belt = "-" * self.short_heading_multiplier
+        print(self.double_tab + belt)
 
     def get_text_from_user(self, message):
         should_continue = True
@@ -73,15 +77,14 @@ class View():
             time.sleep(speed)
 
     def clear_screen(self):
-        pass
-        # """Clear screen - universal for ubuntu/windows platform."""
-        # os.system('cls' if os.name == 'nt' else 'clear')
-        # self.display_heading()
-        # self.display_empty_lines()
+        """Clear screen - universal for ubuntu/windows platform."""
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.display_heading()
+        self.display_empty_lines()
 
     def execute_pause(self):
         """Stop program action until user will press any key."""
-        print(self.empty_lines + self.double_tab + "to continue press any key.." + self.empty_lines)
+        print(self.empty_lines + self.double_tab + "to continue press any key..\r")
         self.getch()
 
     def display_enumerated_collection_elements(self, collection):

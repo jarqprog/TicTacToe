@@ -37,6 +37,9 @@ class GameCtrl():
     def get_player_2(self):
         return self.game.get_players()[1]
 
+    def __set_player_ctrls(self, player_ctrls):
+        self.player_ctrls = player_ctrls
+
     def __setup_game(self):
 
         self.__execute_mode_choice()
@@ -58,19 +61,19 @@ class GameCtrl():
                 symbol = player.get_player().get_symbol()
                 self.__execute_game_screen()
                 player.shoot()
-                print("win ", self.checker.check_if_won(symbol))
-                print("draw: ", (not self.checker.check_if_is_any_free_field()))
+
                 if self.checker.check_if_won(symbol):
                     self.winner = player.get_player()
+                    player.increment_score()
                     self.__execute_game_screen()
                     self.__execute_win_screen()
-                    should_continue = False
+                    should_continue = self.__check_if_restart_game()
                     break
 
                 elif not self.checker.check_if_is_any_free_field():
                     self.__execute_game_screen()
                     self.__execute_draw_screen()
-                    should_continue = False
+                    should_continue = self.__check_if_restart_game()
                     break
 
             self.turn_counter += 1
@@ -84,11 +87,20 @@ class GameCtrl():
         self.view.execute_pause()
 
     def __execute_game_screen(self):
+        player_1 = self.player_1_ctrl.get_player()
+        player_2 = self.player_2_ctrl.get_player()
         self.view.clear_screen()
         self.view.display_message("Mode:    " + self.mode)
         self.view.display_message("Level:   " + self.difficulty_level)
-        self.view.display_message_in_next_line("Turn:    " + str(self.turn_counter))
-        self.view.display_message("Player:  " + str(self.current_player))
+
+        self.view.display_short_belt()
+
+        self.view.display_message_in_next_line("Total score:")
+        self.view.display_short_belt()
+        self.view.display_message(str(player_1) + ": " + str(player_1.get_score()))
+        self.view.display_message(str(player_2) + ": " + str(player_2.get_score()))
+        self.view.display_message_in_next_line("Current turn:    " + str(self.turn_counter))
+        self.view.display_message(self.current_player.get_name() + "'s moving...")
         self.view.display_message_in_next_line(str(self.board))
 
     def __execute_mode_choice(self):
@@ -147,3 +159,18 @@ class GameCtrl():
         ai_names = ["amiga", "commodore", "atari", "zx spectrum", "schneider", "amstrad", "mikrosza"]
         name = random.choice(ai_names)
         return AiCtrl(Player(name), self.board, self.difficulty_level)
+
+    def __check_if_restart_game(self):
+        message = "Press 'r' to restart or any other key to quit game: "
+        user_choice = self.view.get_text_from_user(message)
+        if user_choice.lower() == "r":
+            self.turn_counter = 0
+            self.board = Board()
+            self.checker = ResultChecker(self.board)
+            self.player_1_ctrl.set_board(self.board)
+            self.player_2_ctrl.set_board(self.board)
+            self.__set_player_ctrls([self.player_1_ctrl, self.player_2_ctrl])
+            self.__generate_order_of_players()
+            self.__create_game()
+            return True
+        return False

@@ -6,11 +6,11 @@ class ResultChecker():
         self.board = board
         self.board_indexes_collection = [
                                         (1, 2, 3), (4, 5, 6), (7, 8, 9), (1, 4, 7), (2, 5, 8),
-                                        (3, 6, 9), (1, 5, 9), (3, 5, 6)]
+                                        (3, 6, 9), (1, 5, 9), (3, 5, 7)]
 
         self.board_best_indexes_collection = [
                                                 (1, 2, 3), (7, 8, 9), (1, 4, 7),
-                                                (3, 6, 9), (1, 5, 9), (3, 5, 6)]
+                                                (3, 6, 9), (1, 5, 9), (3, 5, 7)]
 
     def __create_combination(self, indexes):
         fields = self.get_fields()
