@@ -25,7 +25,7 @@ class GameCtrl():
         self.turn_counter = None
         self.winner = None
         self.current_player = None
-        self.players = []
+        self.player_ctrls = []
 
     def get_board(self):
         return self.game.get_board()
@@ -38,21 +38,21 @@ class GameCtrl():
 
     def __setup_game(self):
 
-        # to implement...
         self.__execute_mode_choice()
         self.turn_counter = 1
 
         if (self.mode == "single player"):
-            self.__setup_game_in_single_player_mode()
+            self.__setup_single_player_mode()
         else:
-            self.__setup_game_in_multiplayer_mode()
+            self.__setup_multiplayer_mode()
+        self.__create_game()
         self.__generate_order_of_players()
 
     def execute_game_loop(self):
 
         should_continue = True
         while should_continue:
-            for player in self.players:
+            for player in self.player_ctrls:
                 self.current_player = player.get_player()
                 symbol = player.get_player().get_symbol()
                 self.__execute_game_screen()
@@ -123,20 +123,23 @@ class GameCtrl():
         difficulties_index = self.view.get_game_difficulty(difficulties) - 1
         self.difficulty_level = difficulties[difficulties_index]
 
-    def __setup_game_in_single_player_mode(self):
+    def __setup_single_player_mode(self):
         self.__execute_difficulty_choice()
-        player_1 = Human('Rob')
-        self.player_1_ctrl = HumanCtrl(player_1, self.board)
-        player_2 = Ai('Alex')
-        self.player_2_ctrl = AiCtrl(player_2, self.board)
-        self.game = Game(player_1, player_2, self.board)
+        self.player_1_ctrl = self.__execute_player_creation()
+        self.player_2_ctrl = self.__execute_ai_creation()
+        self.view.display_message_in_next_line(
+                                                "Player created! Your opponent is: " +
+                                                str(self.player_2_ctrl.get_player()))
+        self.view.execute_pause()
 
-    def __setup_game_in_multiplayer_mode(self):
+    def __setup_multiplayer_mode(self):
         self.difficulty_level = "-"
         self.player_1_ctrl = self.__execute_player_creation()
         self.view.display_message_in_next_line("Player created!")
         self.player_2_ctrl = self.__execute_player_creation()
         self.view.display_message_in_next_line("Player created!")
+
+    def __create_game(self):
         self.game = Game(
                             self.player_1_ctrl.get_player(),
                             self.player_2_ctrl.get_player(),
@@ -144,23 +147,25 @@ class GameCtrl():
 
     def __generate_order_of_players(self):
         self.view.clear_screen()
-        self.view.display_message("generated the order of players:")
-        self.players = [self.player_1_ctrl, self.player_2_ctrl]
+        self.view.display_message("drew the order of players:")
+        self.player_ctrls = [self.player_1_ctrl, self.player_2_ctrl]
         self.__set_players_symbols()
-        random.shuffle(self.players)
+        random.shuffle(self.player_ctrls)
         __players = [
-                        self.players[0].get_player(),
-                        self.players[1].get_player()]
+                        self.player_ctrls[0].get_player(),
+                        self.player_ctrls[1].get_player()]
         self.view.display_enumerated_collection_elements(__players)
         self.view.execute_pause()
 
     def __set_players_symbols(self):
-        self.players[0].get_player().set_symbol("x")
-        self.players[1].get_player().set_symbol("o")
+        self.player_ctrls[0].get_player().set_symbol("x")
+        self.player_ctrls[1].get_player().set_symbol("o")
 
     def __execute_player_creation(self):
         name = self.view.get_name_from_user()
         return HumanCtrl(Human(name), self.board)
 
     def __execute_ai_creation(self):
-        pass
+        ai_names = ["amiga", "commodore", "atari", "zx spectrum", "schneider", "amstrad", "mikrosza"]
+        name = random.choice(ai_names)
+        return AiCtrl(Ai(name), self.board)

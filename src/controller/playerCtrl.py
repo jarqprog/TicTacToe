@@ -14,7 +14,5 @@ class PlayerCtrl(ABC):
 
     @abstractmethod
     def shoot(self):
-        """Return attacked field number (in range 1 - 9)."""
         pass
-        # implement different methods for human / AI player 
-
+        # implement different methods for human / AI player

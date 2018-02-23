@@ -16,7 +16,6 @@ class HumanCtrl(PlayerCtrl):
         return self.player
 
     def shoot(self):
-        """Return attacked field number (in range 1 - 9)."""
         symbol = self.player.get_symbol()
         fields = self.board.get_fields()
         correct_choices = [str(field) for field in fields if field not in ("x", "o")]
