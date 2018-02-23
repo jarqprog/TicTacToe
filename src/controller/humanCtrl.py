@@ -12,9 +12,6 @@ class HumanCtrl(PlayerCtrl):
         super().__init__(player, board)
         self.view = PlayerView()
 
-    def get_player(self):
-        return self.player
-
     def shoot(self):
         symbol = self.player.get_symbol()
         fields = self.board.get_fields()

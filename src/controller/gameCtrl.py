@@ -4,6 +4,7 @@ from model.human import Human
 from model.ai import Ai
 from .humanCtrl import HumanCtrl
 from .aiCtrl import AiCtrl
+from ai.resultChecker import ResultChecker
 from model.board import Board
 import random
 
@@ -13,13 +14,14 @@ class GameCtrl():
     def __init__(self):
         self.view = GameView()
         self.board = Board()
+        self.checker = ResultChecker(self.board)
         self.__setup_default_parameters()
         self.__setup_game()
 
     def __setup_default_parameters(self):
         self.mode = None
         self.game = None
-        self.difficulty = None
+        self.difficulty_level = None
         self.player_1_ctrl = None
         self.player_2_ctrl = None
         self.turn_counter = None
@@ -57,12 +59,12 @@ class GameCtrl():
                 symbol = player.get_player().get_symbol()
                 self.__execute_game_screen()
                 player.shoot()
-                if self.__check_if_won(symbol):
+                if self.checker.check_if_won(symbol):
                     self.winner = player.get_player()
                     self.__execute_win_screen()
                     should_continue = False
                     break
-                elif not self.__check_if_is_any_free_field():
+                elif not self.checker.check_if_is_any_free_field():
                     self.__execute_draw_screen()
                     should_continue = False
                     break
@@ -85,33 +87,6 @@ class GameCtrl():
         self.view.display_message_in_next_line("Turn:    " + str(self.turn_counter))
         self.view.display_message("Player:  " + str(self.current_player))
         self.view.display_message_in_next_line(str(self.board))
-
-    def __check_if_won(self, player_symbol):
-        # player_symbol = x or o
-        _board = [str(field) for field in self.board.get_fields()]
-        _win_combination = [player_symbol, player_symbol, player_symbol]
-        sublist_len = 3
-        _to_check = [_board[x:x+sublist_len] for x in (0, 3, 6)]
-        _to_check += [
-                    [_board[x-1] for x in (1, 4, 7)],
-                    [_board[x-1] for x in (2, 5, 8)],
-                    [_board[x-1] for x in (3, 6, 9)],
-                    [_board[x-1] for x in (1, 5, 9)],
-                    [_board[x-1] for x in (3, 5, 6)]]
-
-        for combination in _to_check:
-            if combination == _win_combination:
-                return True
-
-        return False
-
-    def __check_if_is_any_free_field(self):
-
-        _board = [str(field) for field in self.board.get_fields()]
-        for field in _board:
-            if field.isdigit():
-                return True
-        return False
 
     def __execute_mode_choice(self):
         modes = ["single player", "multiplayer"]
@@ -168,4 +143,4 @@ class GameCtrl():
     def __execute_ai_creation(self):
         ai_names = ["amiga", "commodore", "atari", "zx spectrum", "schneider", "amstrad", "mikrosza"]
         name = random.choice(ai_names)
-        return AiCtrl(Ai(name), self.board)
+        return AiCtrl(Ai(name), self.board, self.difficulty_level)
