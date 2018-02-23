@@ -1,11 +1,10 @@
 from model.game import Game
 from view.gameView import GameView
-from model.human import Human
-from model.ai import Ai
 from .humanCtrl import HumanCtrl
 from .aiCtrl import AiCtrl
 from ai.resultChecker import ResultChecker
 from model.board import Board
+from model.player import Player
 import random
 
 
@@ -61,22 +60,22 @@ class GameCtrl():
                 player.shoot()
                 if self.checker.check_if_won(symbol):
                     self.winner = player.get_player()
+                    self.__execute_game_screen()
                     self.__execute_win_screen()
                     should_continue = False
                     break
                 elif not self.checker.check_if_is_any_free_field():
+                    self.__execute_game_screen()
                     self.__execute_draw_screen()
                     should_continue = False
                     break
             self.turn_counter += 1
 
     def __execute_win_screen(self):
-        self.view.clear_screen()
         self.view.display_message_in_next_line("Winner is: " + str(self.winner))
         self.view.execute_pause()
 
     def __execute_draw_screen(self):
-        self.view.clear_screen()
         self.view.display_message_in_next_line("Result is draw!")
         self.view.execute_pause()
 
@@ -94,7 +93,7 @@ class GameCtrl():
         self.mode = modes[modes_index]
 
     def __execute_difficulty_choice(self):
-        difficulties = ["easy", "normal", "hard"]
+        difficulties = ["easy", "normal"]
         difficulties_index = self.view.get_game_difficulty(difficulties) - 1
         self.difficulty_level = difficulties[difficulties_index]
 
@@ -138,9 +137,9 @@ class GameCtrl():
 
     def __execute_player_creation(self):
         name = self.view.get_name_from_user()
-        return HumanCtrl(Human(name), self.board)
+        return HumanCtrl(Player(name), self.board)
 
     def __execute_ai_creation(self):
         ai_names = ["amiga", "commodore", "atari", "zx spectrum", "schneider", "amstrad", "mikrosza"]
         name = random.choice(ai_names)
-        return AiCtrl(Ai(name), self.board, self.difficulty_level)
+        return AiCtrl(Player(name), self.board, self.difficulty_level)

@@ -1,14 +1,10 @@
 from .playerCtrl import PlayerCtrl
 from view.playerView import PlayerView
-from exception.customException import CustomException
-from model.human import Human
 
 
 class HumanCtrl(PlayerCtrl):
 
     def __init__(self, player, board):
-        if not isinstance(player, Human):
-            raise CustomException("wrong type!")
         super().__init__(player, board)
         self.view = PlayerView()
 

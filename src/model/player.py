@@ -1,14 +1,9 @@
-from abc import ABC, abstractmethod
 
+class Player():
 
-class Player(ABC):
-    """Abstract class!"""
-
-    @abstractmethod
     def __init__(self, name):
         self.name = name
         self.symbol = "-"
-        self.shots = []  # contains attacked squares, eg. [1, 3, 4, 5]
 
     def __str__(self):
         return "{} ({})".format(self.name, self.symbol)
@@ -21,6 +16,3 @@ class Player(ABC):
 
     def get_symbol(self):
         return self.symbol
-
-    def get_shots(self):
-        return self.shots
