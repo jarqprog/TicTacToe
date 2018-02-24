@@ -2,11 +2,10 @@
 class ResultChecker():
 
     def __init__(self, board):
-        super().__init__()
         self.board = board
         self.board_indexes_collection = [
-                                        (1, 2, 3), (4, 5, 6), (7, 8, 9), (1, 4, 7), (2, 5, 8),
-                                        (3, 6, 9), (1, 5, 9), (3, 5, 7)]
+                                            (1, 2, 3), (4, 5, 6), (7, 8, 9), (1, 4, 7), (2, 5, 8),
+                                            (3, 6, 9), (1, 5, 9), (3, 5, 7)]
 
         self.board_best_indexes_collection = [
                                                 (1, 2, 3), (7, 8, 9), (1, 4, 7),
