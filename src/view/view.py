@@ -61,20 +61,19 @@ class View():
                 should_continue = False
         return user_input
 
-    @staticmethod
-    def animate_string(speed=0.0005, string=None):
+    def animate_string(self, text, latency=0.1):
         """
         Display string using pseudo-animating technique.
 
         speed: determine "animating" speed (float), default: 0.0005
         string: string text to display
         """
-        if string is None:
-            string = "\n\nLoading program...\n\n"
-        for char in string:
+        text = self.empty_lines + self.double_tab + text
+        for char in text:
             sys.stdout.write("%s" % char)
             sys.stdout.flush()
-            time.sleep(speed)
+            time.sleep(latency)
+            latency = latency * 0.9
 
     def clear_screen(self):
         """Clear screen - universal for ubuntu/windows platform."""
@@ -100,9 +99,30 @@ class View():
         is_choice_ready = False
         while not is_choice_ready:
             self.clear_screen()
-            self.display_message(message)
+            self.animate_string(message)
             self.display_enumerated_collection_elements(collection)
             user_choice = input(self.double_tab)
             if DataTools.check_if_element_in_collection(user_choice, correct_choices):
                 is_choice_ready = True
         return int(user_choice)
+
+    def display_text_with_asci_graphics(self, text, repeat=9):
+        """
+        Display text and asci graphisc in pseudo-animating form.
+
+        Parameters:
+        text: string (text to display)
+        repeat: integer (number of repeats in loop)
+
+        Sample output:
+        ***************************2....
+        *****************************1..
+        *******************************0
+        text
+        """
+
+        for counter in range(repeat, -1, -1):
+            stars = "\r\r{: >25}".format("ox"*counter)
+            self.animate_string(stars, latency=0.005)
+        self.animate_string(self.double_tab + text)
+        self.display_empty_lines()

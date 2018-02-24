@@ -32,9 +32,9 @@ class AiBrain(ABC):
                 best_fields = [field for field in (combi[0], combi[2]) if field.get_symbol().isdecimal()]  # edge fields
                 if best_fields:
                     field = random.choice(best_fields)
-                elif combi:
+                else:
                     field = combi[1]  # middle field
-            else:  # there is no winning combination
+            else:  # there is no winning combination, get anything
                 field = self.__get_any_free_field()
 
         if field:
@@ -43,18 +43,13 @@ class AiBrain(ABC):
     def __select_best_combination(self):
         all_possible_combis = self.__get_best_winning_combinations()
 
-        best_combis = [
-                        combi for combi in all_possible_combis
-                        if len(list(filter(lambda x: x.get_symbol() == self.__player_symbol, combi))) == 2]
-
-        good_combis = [
+        better_combis = [
                         combi for combi in all_possible_combis
                         if len(list(filter(lambda x: x.get_symbol() == self.__player_symbol, combi))) == 1]
 
-        if best_combis:
-            return random.choice(best_combis)
-        elif good_combis:
-            return random.choice(good_combis)
+        if better_combis:
+            return random.choice(better_combis)
+
         elif all_possible_combis:
             return random.choice(all_possible_combis)
 
@@ -73,7 +68,8 @@ class AiBrain(ABC):
         for indexes in board_indexes_collection:
             possible_win_combis.append(self.__create_combination(indexes))
 
-        return [combi for combi in possible_win_combis if len(combi) == 3]
+        return [combi for combi in possible_win_combis
+                if len(combi) == 3]  # avoid lost combination where opponent has symbol
 
     def __create_combination(self, indexes):
         return [self.__fields[x-1] for x in indexes if str(self.__fields[x-1]) != self.__opponent_symbol]
@@ -91,6 +87,12 @@ class AiBrain(ABC):
     def __get_free_fields(self):
         return [field for field in self.__fields if field.get_symbol().isdigit()]
 
+    def __try_to_get_field_to_win_or_block(self):
+        field = self.__try_to_get_winning_field_of_given_player(self.__player_symbol)
+        if not field:
+            field = self.__try_to_get_winning_field_of_given_player(self.__opponent_symbol)
+        return field
+
     def __try_to_get_winning_field_of_given_player(self, player_symbol):
         """For win or block opponent."""
         free_fields = self.__get_free_fields()
@@ -101,9 +103,3 @@ class AiBrain(ABC):
                 field.set_symbol(current_symbol)
                 return field
             field.set_symbol(current_symbol)
-
-    def __try_to_get_field_to_win_or_block(self):
-        field = self.__try_to_get_winning_field_of_given_player(self.__player_symbol)
-        if not field:
-            field = self.__try_to_get_winning_field_of_given_player(self.__opponent_symbol)
-        return field
