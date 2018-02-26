@@ -6,7 +6,7 @@ from ai.aiBrain import AiBrain
 class AiCtrl(PlayerCtrl, AiBrain):
 
     def __init__(self, player, board, difficulty_level):
-        if difficulty_level not in ("easy", "normal"):
+        if difficulty_level not in ("easy", "normal", "hard"):
             raise CustomException("there is no such difficulty level!")
         super().__init__(player, board)
         self.intelligence = difficulty_level
@@ -19,3 +19,5 @@ class AiCtrl(PlayerCtrl, AiBrain):
             self.shoot_in_easy_mode()
         elif self.intelligence == "normal":
             self.shoot_in_normal_mode()
+        else:
+            self.shoot_in_hard_mode()

@@ -117,7 +117,7 @@ class GameCtrl():
         self.mode = modes[modes_index]
 
     def __execute_difficulty_choice(self):
-        difficulties = ["easy", "normal"]
+        difficulties = ["easy", "normal", "hard"]
         difficulties_index = self.view.get_game_difficulty(difficulties) - 1
         self.difficulty_level = difficulties[difficulties_index]
 

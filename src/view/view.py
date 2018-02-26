@@ -65,7 +65,7 @@ class View():
         """
         Display string using pseudo-animating technique.
 
-        speed: determine "animating" speed (float), default: 0.0005
+        speed: determine "animating" speed (float), default: 0.1
         string: string text to display
         """
         text = self.empty_lines + self.double_tab + text
