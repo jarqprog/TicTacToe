@@ -61,7 +61,7 @@ class View():
                 should_continue = False
         return user_input
 
-    def animate_string(self, text, latency=0.0000001):
+    def animate_string(self, text, latency=0.1):
         """
         Display string using pseudo-animating technique.
 
@@ -77,10 +77,9 @@ class View():
 
     def clear_screen(self):
         """Clear screen - universal for ubuntu/windows platform."""
-        # os.system('cls' if os.name == 'nt' else 'clear')
-        # self.display_heading()
-        # self.display_empty_lines()
-        pass
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.display_heading()
+        self.display_empty_lines()
 
     def execute_pause(self):
         """Stop program action until user will press any key."""

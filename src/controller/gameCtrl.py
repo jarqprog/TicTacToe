@@ -152,15 +152,6 @@ class GameCtrl():
                         self.player_ctrls[0].get_player(),
                         self.player_ctrls[1].get_player()]
         self.view.display_enumerated_collection_elements(__players)
-
-        ###
-
-        if self.difficulty_level == "hard":
-            self.player_ctrls = [
-                            self.player_1_ctrl,
-                            self.player_2_ctrl]
-
-        ###
         self.view.execute_pause()
 
     def __set_players_symbols(self):
