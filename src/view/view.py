@@ -86,6 +86,20 @@ class View():
         print(self.empty_lines + self.double_tab + "to continue press any key..\r")
         self.getch()
 
+    def display_collection(self, collection):
+        self.display_empty_lines()
+        for element in collection:
+            print(self.double_tab + element)
+
+    def display_collection_with_animate_strings(self, collection, latency=0.02):
+        self.display_empty_lines()
+        to_display = "\n".join(collection)
+        for char in to_display:
+            sys.stdout.write("%s" % char)
+            sys.stdout.flush()
+            time.sleep(latency)
+            latency = latency * 0.9
+
     def display_enumerated_collection_elements(self, collection):
         self.display_empty_lines()
         for num, element in enumerate(collection):
