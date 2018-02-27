@@ -16,13 +16,11 @@ class ResultChecker():
         return [fields[x-1] for x in indexes]
 
     def check_if_won(self, player_symbol):
-        win_combination = [player_symbol, player_symbol, player_symbol]
-        to_check = []
-        for indexes in self.board_indexes_collection:
-            to_check.append(self.__create_combination(indexes))
 
-        for combination in to_check:
-            if combination == win_combination:
+        win_combination = [player_symbol, player_symbol, player_symbol]
+
+        for indexes in self.board_indexes_collection:
+            if win_combination == self.__create_combination(indexes):
                 return True
 
         return False
