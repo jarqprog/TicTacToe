@@ -8,13 +8,15 @@ class AiBrain(ABC):
 
     MIDDLE_FIELD_NUMBER = 5
 
-    EASY_ACTION_FACTOR = 3
-    NORMAL_ACTION_FACTOR = 15
-    SMART_ACTION_FACTOR = 37
+    EASY_ACTION_FACTOR = 1
+    NORMAL_ACTION_FACTOR = 10
+    SMART_ACTION_FACTOR = 20
+    BRILLIANT_ACTION_FACTOR = 60
 
-    LOW_INTELLIGENCE_LVL = 20
-    MEDIUM_INTELLIGENCE_LVL = 50
-    HIGH_INTELLIGENCE_LVL = 90
+    #  use it to balance ai 'intelligence' level:
+    LOW_INTELLIGENCE_LVL = 30
+    MEDIUM_INTELLIGENCE_LVL = 80
+    HIGH_INTELLIGENCE_LVL = 180
 
     def __setup_parameters(self):
         self.__player_symbol = self.player.get_symbol()
@@ -135,7 +137,7 @@ class AiBrain(ABC):
         cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
         cond_1 = self.__is_player_moving_first
         cond_2 = self.__check_if_it_is_given_turn(2)  # is it second turn?
-        cond_3 = not self.__check_if_opponent_occupies_given_field(self.MIDDLE_FIELD_NUMBER)
+        cond_3 = self.__check_if_given_field_is_unoccupied(self.MIDDLE_FIELD_NUMBER)
 
         if cond_0 & cond_1 & cond_2 & cond_3:
             opposite_corner_fields_pairs = {1: 9, 3: 7, 7: 3, 9: 1}
@@ -146,7 +148,7 @@ class AiBrain(ABC):
 
     def __try_to_get_middle_field_while_defending(self):
 
-        cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
+        cond_0 = self.__intelligence_factor > self.BRILLIANT_ACTION_FACTOR
         cond_1 = not self.__is_player_moving_first
         cond_2 = self.__check_if_it_is_given_turn(1)  # is it first turn?
 
@@ -158,8 +160,9 @@ class AiBrain(ABC):
         cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
         cond_1 = not self.__is_player_moving_first
         cond_2 = self.__check_if_it_is_given_turn(2)  # is it second turn?
+        cond_3 = not self.__check_if_given_field_is_unoccupied(self.MIDDLE_FIELD_NUMBER)
 
-        if cond_0 & cond_1 & cond_2:
+        if cond_0 & cond_1 & cond_2 & cond_3:
             if self.__check_if_opponent_attacked_opposite_corners():
                 cross_fields_numbers = [2, 4, 6, 8]
                 random.shuffle(cross_fields_numbers)
@@ -173,10 +176,10 @@ class AiBrain(ABC):
         if field.get_symbol().isdecimal():
             return field
 
-    def __check_if_opponent_occupies_given_field(self, field_number):
+    def __check_if_given_field_is_unoccupied(self, field_number):
         if self.__try_to_get_unoccupied_field_by_number(field_number):
-            return False
-        return True
+            return True
+        return False
 
     def __check_if_opponent_attacked_opposite_corners(self):
         to_compare_combination = [self.__opponent_symbol, self.__opponent_symbol]
