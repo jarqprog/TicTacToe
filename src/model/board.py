@@ -7,9 +7,15 @@ class Board():
 
     def __init__(self):
         self.fields = []
-        self.setup_fields()
+        self.__setup_fields()
 
-    def setup_fields(self):
+    def change_field(self, field_number, symbol):
+        self.__get_field_by_number(field_number).set_symbol(symbol)
+
+    def get_fields(self):
+        return self.fields
+
+    def __setup_fields(self):
 
         self.fields = []
         fields_quantity = 9
@@ -18,14 +24,8 @@ class Board():
             field = Field(str(num+1))
             self.fields.append(field)
 
-    def get_field_by_index(self, fields_index):
-        return self.fields[fields_index-1]
-
-    def change_field(self, index, symbol):
-        self.get_field_by_index(index).set_symbol(symbol)
-
-    def get_fields(self):
-        return self.fields
+    def __get_field_by_number(self, field_number):
+        return self.fields[field_number-1]
 
     def __str__(self):
         board = """\n

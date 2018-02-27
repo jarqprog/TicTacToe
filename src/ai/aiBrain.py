@@ -4,15 +4,18 @@ from ai.resultChecker import ResultChecker
 
 
 class AiBrain(ABC):
-    """Fields: self.player, self.board, self.checker implemented in subclass - AiCtrl."""
+    """Parameters: player, board, checker, difficulty_level implemented in subclass - AiCtrl."""
 
     MIDDLE_FIELD_NUMBER = 5
     EASY_ACTION_FACTOR = 3
     NORMAL_ACTION_FACTOR = 15
-    SMART_ACTION_FACTOR = 30
+    SMART_ACTION_FACTOR = 37
+
+    LOW_INTELLIGENCE_LVL = 20
+    MEDIUM_INTELLIGENCE_LVL = 50
+    HIGH_INTELLIGENCE_LVL = 90
 
     def __setup_parameters(self):
-
         self.__player_symbol = self.player.get_symbol()
         self.__opponent_symbol = self.__get_opponent_symbol()
         self.__fields = self.board.get_fields()
@@ -41,19 +44,17 @@ class AiBrain(ABC):
     def __get_intelligence_factor(self):
 
         if self.difficulty_level == "easy":
-            intelligence = 20
+            intelligence = self.LOW_INTELLIGENCE_LVL
         elif self.difficulty_level == "normal":
-            intelligence = 40
+            intelligence = self.MEDIUM_INTELLIGENCE_LVL
         else:
-            intelligence = 90
+            intelligence = self.HIGH_INTELLIGENCE_LVL
 
         return random.randint(0, intelligence)
 
     def __try_to_get_field_from_best_combination(self):
 
-        cond_0 = self.__intelligence_factor > self.NORMAL_ACTION_FACTOR
-
-        if cond_0:
+        if self.__intelligence_factor > self.NORMAL_ACTION_FACTOR:
             combi = self.__select_best_combination()
             if combi:
                 best_fields = [field for field in (combi[0], combi[2]) if field.get_symbol().isdecimal()]  # edge fields
@@ -90,10 +91,11 @@ class AiBrain(ABC):
             possible_win_combis.append(self.__create_combination(indexes))
 
         return [combi for combi in possible_win_combis
-                if len(combi) == 3]  # avoid lost combination where opponent has symbol
+                if len(combi) == 3]  # avoid lost combination where opponent has own symbol
 
     def __create_combination(self, indexes):
-        return [self.__fields[x-1] for x in indexes if str(self.__fields[x-1]) != self.__opponent_symbol]
+        return [self.__fields[x-1] for x in indexes
+                if self.__fields[x-1].get_symbol() != self.__opponent_symbol]
 
     def __get_opponent_symbol(self):
         if self.__player_symbol == "x":
@@ -103,8 +105,7 @@ class AiBrain(ABC):
     def __try_to_get_any_free_field(self):
         free_fields = self.__get_free_fields()
         if free_fields:
-            random.shuffle(free_fields)
-            return free_fields[0]
+            return random.choice(free_fields)
 
     def __get_free_fields(self):
         return [field for field in self.__fields if field.get_symbol().isdigit()]
@@ -134,7 +135,7 @@ class AiBrain(ABC):
 
         cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
         cond_1 = self.__is_player_moving_first
-        cond_2 = self.__check_if_it_is_given_turn(2)  # is second turn?
+        cond_2 = self.__check_if_it_is_given_turn(2)  # is it second turn?
         cond_3 = not self.__check_if_opponent_occupies_given_field(self.MIDDLE_FIELD_NUMBER)
 
         if cond_0 & cond_1 & cond_2 & cond_3:
@@ -147,7 +148,7 @@ class AiBrain(ABC):
     def __try_to_get_middle_field_while_defending(self):
 
         cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
-        cond_1 = (not self.__is_player_moving_first)
+        cond_1 = not self.__is_player_moving_first
         cond_2 = self.__check_if_it_is_given_turn(1)  # is it first turn?
 
         if cond_0 & cond_1 & cond_2:
@@ -156,7 +157,7 @@ class AiBrain(ABC):
     def __try_to_get_field_to_block_opposite_corner_tactic(self):
 
         cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
-        cond_1 = (not self.__is_player_moving_first)
+        cond_1 = not self.__is_player_moving_first
         cond_2 = self.__check_if_it_is_given_turn(2)  # is it second turn?
 
         if cond_0 & cond_1 & cond_2:
@@ -196,5 +197,5 @@ class AiBrain(ABC):
         max_free_fields_quantity = 9
         current_free_fields_quantity = len(self.__get_free_fields())
         min_fields_quantity = max_free_fields_quantity - ((turn_number-1) * 2) - 1
-        max_fields_quantity = max_free_fields_quantity - ((turn_number-1) * 2)
+        max_fields_quantity = min_fields_quantity + 1
         return current_free_fields_quantity in (min_fields_quantity, max_fields_quantity)
