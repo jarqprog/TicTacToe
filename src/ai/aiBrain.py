@@ -7,6 +7,7 @@ class AiBrain(ABC):
     """Parameters: player, board, checker, difficulty_level implemented in subclass - AiCtrl."""
 
     MIDDLE_FIELD_NUMBER = 5
+
     EASY_ACTION_FACTOR = 3
     NORMAL_ACTION_FACTOR = 15
     SMART_ACTION_FACTOR = 37
@@ -112,9 +113,7 @@ class AiBrain(ABC):
 
     def __try_to_get_field_to_win_or_block(self):
 
-        cond_0 = self.__intelligence_factor > self.EASY_ACTION_FACTOR
-
-        if cond_0:
+        if self.__intelligence_factor > self.EASY_ACTION_FACTOR:
             field = self.__try_to_get_winning_field_of_given_player(self.__player_symbol)
             if not field:
                 field = self.__try_to_get_winning_field_of_given_player(self.__opponent_symbol)

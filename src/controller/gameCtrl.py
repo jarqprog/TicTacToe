@@ -189,6 +189,7 @@ class GameCtrl():
     def __check_if_restart_game(self):
         message = "Press 'r' to restart or any other key to quit game: "
         user_choice = self.view.get_text_from_user(message)
+
         if user_choice.lower() == "r":
             return True
 
