@@ -15,9 +15,4 @@ class AiCtrl(PlayerCtrl, AiBrain):
         return self.player
 
     def shoot(self):
-        if self.difficulty_level == "easy":
-            self.shoot_in_easy_mode()
-        elif self.difficulty_level == "normal":
-            self.shoot_in_normal_mode()
-        else:
-            self.shoot_in_hard_mode()
+        self.attack_field()
