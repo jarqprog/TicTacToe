@@ -1,6 +1,7 @@
 import random
 from abc import ABC
 from ai.resultChecker import ResultChecker
+from model.nullField import NullField
 
 
 class AiBrain(ABC):
@@ -10,6 +11,8 @@ class AiBrain(ABC):
     EASY_ACTION_FACTOR = 3
     NORMAL_ACTION_FACTOR = 15
     SMART_ACTION_FACTOR = 30
+
+    null_field = NullField()
 
     def __setup_parameters(self):
 
@@ -34,7 +37,7 @@ class AiBrain(ABC):
 
         for procedure in procedures:
             field = procedure()
-            if field:
+            if field.get_symbol() != 'null':
                 field.set_symbol(self.__player_symbol)
                 break
 
@@ -61,6 +64,8 @@ class AiBrain(ABC):
                     return random.choice(best_fields)
                 return combi[1]  # middle field
 
+        return self.null_field
+
     def __select_best_combination(self):
         all_possible_combis = self.__get_best_winning_combinations()
 
@@ -74,6 +79,8 @@ class AiBrain(ABC):
         elif all_possible_combis:
             return random.choice(all_possible_combis)
 
+        return []
+
     def __get_best_winning_combinations(self):
         best_indexes = self.__checker.get_board_best_indexes_collection()
         best_combis = self.__get_possible_winning_combinations(best_indexes)
@@ -83,6 +90,7 @@ class AiBrain(ABC):
             regular_indexes = self.__checker.get_board_indexes_collection()
             combis = self.__get_possible_winning_combinations(regular_indexes)
             return combis
+        return []
 
     def __get_possible_winning_combinations(self, board_indexes_collection):
         possible_win_combis = []
@@ -106,6 +114,8 @@ class AiBrain(ABC):
             random.shuffle(free_fields)
             return free_fields[0]
 
+        return self.null_field
+
     def __get_free_fields(self):
         return [field for field in self.__fields if field.get_symbol().isdigit()]
 
@@ -119,6 +129,8 @@ class AiBrain(ABC):
                 field = self.__try_to_get_winning_field_of_given_player(self.__opponent_symbol)
             return field
 
+        return self.null_field
+
     def __try_to_get_winning_field_of_given_player(self, player_symbol):
         """For win or block opponent."""
         free_fields = self.__get_free_fields()
@@ -129,6 +141,8 @@ class AiBrain(ABC):
                 field.set_symbol(current_symbol)
                 return field
             field.set_symbol(current_symbol)
+
+        return self.null_field
 
     def __try_to_get_opposite_corner_field(self):
 
@@ -144,6 +158,8 @@ class AiBrain(ABC):
                     if self.__fields[value-1].get_symbol().isdecimal():
                         return self.__fields[value-1]
 
+        return self.null_field
+
     def __try_to_get_middle_field_while_defending(self):
 
         cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
@@ -152,6 +168,8 @@ class AiBrain(ABC):
 
         if cond_0 & cond_1 & cond_2:
             return self.__try_to_get_unoccupied_field_by_number(self.MIDDLE_FIELD_NUMBER)
+
+        return self.null_field
 
     def __try_to_get_field_to_block_opposite_corner_tactic(self):
 
@@ -168,10 +186,14 @@ class AiBrain(ABC):
                     if cross_field:
                         return cross_field
 
+        return self.null_field
+
     def __try_to_get_unoccupied_field_by_number(self, field_number):
         field = self.__fields[field_number-1]
         if field.get_symbol().isdecimal():
             return field
+
+        return self.null_field
 
     def __check_if_opponent_occupies_given_field(self, field_number):
         if self.__try_to_get_unoccupied_field_by_number(field_number):
