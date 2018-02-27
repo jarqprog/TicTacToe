@@ -75,11 +75,10 @@ class View():
             latency = latency * self.LATENCY_REDUCTOR
 
     def clear_screen(self):
-        # """Clear screen - universal for ubuntu/windows platform."""
-        # os.system('cls' if os.name == 'nt' else 'clear')
-        # self.display_heading()
-        # self.display_empty_lines()
-        pass
+        """Clear screen - universal for ubuntu/windows platform."""
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.display_heading()
+        self.display_empty_lines()
 
     def execute_pause(self):
         """Stop program action until user will press any key."""
