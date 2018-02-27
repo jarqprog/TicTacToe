@@ -7,72 +7,59 @@ class AiBrain(ABC):
     """Fields: self.player, self.board, self.checker implemented in subclass - AiCtrl."""
 
     MIDDLE_FIELD_NUMBER = 5
+    EASY_ACTION_FACTOR = 3
+    NORMAL_ACTION_FACTOR = 15
+    SMART_ACTION_FACTOR = 30
 
-    def __setup_fields(self):
+    def __setup_parameters(self):
+
         self.__player_symbol = self.player.get_symbol()
         self.__opponent_symbol = self.__get_opponent_symbol()
         self.__fields = self.board.get_fields()
         self.__checker = ResultChecker(self.board)
-        self.__is_in_draw_mode = False
         self.__is_player_moving_first = self.__check_if_player_moving_first()
+        self.__intelligence_factor = self.__get_intelligence_factor()
 
-    def shoot_in_easy_mode(self):
-        self.__setup_fields()
-        self.__select_best_field_to_attack_easy_mode()
+    def attack_field(self):
 
-    def shoot_in_normal_mode(self):
-        self.__setup_fields()
-        self.__select_best_field_to_attack_normal_mode()
+        self.__setup_parameters()
 
-    def shoot_in_hard_mode(self):
-        self.__setup_fields()
-        self.__select_best_field_to_attack_hard_mode()
+        procedures = (
+                        self.__try_to_get_field_to_win_or_block,
+                        self.__try_to_get_middle_field_while_defending,
+                        self.__try_to_get_field_to_block_opposite_corner_tactic,
+                        self.__try_to_get_opposite_corner_field,
+                        self.__try_to_get_field_from_best_combination,
+                        self.__try_to_get_any_free_field)
 
-    def __select_best_field_to_attack_easy_mode(self):
-        field = self.__try_to_get_field_to_win_or_block()
-        if not field:
-            field = random.choice(self.__get_free_fields())   # get field by random choice
-        if field:
-            field.set_symbol(self.__player_symbol)
+        for procedure in procedures:
+            field = procedure()
+            if field:
+                field.set_symbol(self.__player_symbol)
+                break
 
-    def __select_best_field_to_attack_normal_mode(self):
-        field = self.__try_to_get_field_to_win_or_block()  # get field that wins or blocks opponent
-        if not field:
+    def __get_intelligence_factor(self):
+
+        if self.difficulty_level == "easy":
+            intelligence = 20
+        elif self.difficulty_level == "normal":
+            intelligence = 40
+        else:
+            intelligence = 90
+
+        return random.randint(0, intelligence)
+
+    def __try_to_get_field_from_best_combination(self):
+
+        cond_0 = self.__intelligence_factor > self.NORMAL_ACTION_FACTOR
+
+        if cond_0:
             combi = self.__select_best_combination()
             if combi:
                 best_fields = [field for field in (combi[0], combi[2]) if field.get_symbol().isdecimal()]  # edge fields
                 if best_fields:
-                    field = random.choice(best_fields)
-                else:
-                    field = combi[1]  # middle field
-            else:  # there is no winning combination, get anything
-                field = self.__get_any_free_field()
-
-        if field:
-            field.set_symbol(self.__player_symbol)
-
-    def __select_best_field_to_attack_hard_mode(self):
-
-        field = self.__try_to_get_field_to_win_or_block()  # get field that wins or blocks opponent
-        if not field:  # if it's second player, try 'draw' strategy:
-            field = self.__try_to_get_middle_field_while_defending()
-        if not field:  # if it's second player, try continue 'draw' strategy:
-            field = self.__try_to_get_field_to_block_opposite_corner_tactic()
-        if not field:  # while attaking, in second turn, if middle is free, try attack opposite corner:
-            field = self.__try_to_get_opposite_corner_field()
-        if not field:
-            combi = self.__select_best_combination()
-            if combi:
-                best_fields = [field for field in (combi[0], combi[2]) if field.get_symbol().isdecimal()]  # edge fields
-                if best_fields:
-                    field = random.choice(best_fields)
-                else:
-                    field = combi[1]  # middle field
-            else:  # there is no winning combination, get anything
-                field = self.__get_any_free_field()
-
-        if field:
-            field.set_symbol(self.__player_symbol)
+                    return random.choice(best_fields)
+                return combi[1]  # middle field
 
     def __select_best_combination(self):
         all_possible_combis = self.__get_best_winning_combinations()
@@ -113,19 +100,24 @@ class AiBrain(ABC):
             return "o"
         return "x"
 
-    def __get_any_free_field(self):
+    def __try_to_get_any_free_field(self):
         free_fields = self.__get_free_fields()
         if free_fields:
+            random.shuffle(free_fields)
             return free_fields[0]
 
     def __get_free_fields(self):
         return [field for field in self.__fields if field.get_symbol().isdigit()]
 
     def __try_to_get_field_to_win_or_block(self):
-        field = self.__try_to_get_winning_field_of_given_player(self.__player_symbol)
-        if not field:
-            field = self.__try_to_get_winning_field_of_given_player(self.__opponent_symbol)
-        return field
+
+        cond_0 = self.__intelligence_factor > self.EASY_ACTION_FACTOR
+
+        if cond_0:
+            field = self.__try_to_get_winning_field_of_given_player(self.__player_symbol)
+            if not field:
+                field = self.__try_to_get_winning_field_of_given_player(self.__opponent_symbol)
+            return field
 
     def __try_to_get_winning_field_of_given_player(self, player_symbol):
         """For win or block opponent."""
@@ -139,10 +131,13 @@ class AiBrain(ABC):
             field.set_symbol(current_symbol)
 
     def __try_to_get_opposite_corner_field(self):
+
+        cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
         cond_1 = self.__is_player_moving_first
         cond_2 = self.__check_if_it_is_given_turn(2)  # is second turn?
         cond_3 = not self.__check_if_opponent_occupies_given_field(self.MIDDLE_FIELD_NUMBER)
-        if cond_1 & cond_2 & cond_3:
+
+        if cond_0 & cond_1 & cond_2 & cond_3:
             opposite_corner_fields_pairs = {1: 9, 3: 7, 7: 3, 9: 1}
             for key, value in opposite_corner_fields_pairs.items():
                 if self.__fields[key-1].get_symbol() == self.__player_symbol:
@@ -150,15 +145,21 @@ class AiBrain(ABC):
                         return self.__fields[value-1]
 
     def __try_to_get_middle_field_while_defending(self):
+
+        cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
         cond_1 = (not self.__is_player_moving_first)
-        cond_2 = self.__check_if_it_is_given_turn(1)  # is first turn?
-        if cond_1 & cond_2:
+        cond_2 = self.__check_if_it_is_given_turn(1)  # is it first turn?
+
+        if cond_0 & cond_1 & cond_2:
             return self.__try_to_get_unoccupied_field_by_number(self.MIDDLE_FIELD_NUMBER)
 
     def __try_to_get_field_to_block_opposite_corner_tactic(self):
+
+        cond_0 = self.__intelligence_factor > self.SMART_ACTION_FACTOR
         cond_1 = (not self.__is_player_moving_first)
-        cond_2 = self.__check_if_it_is_given_turn(2)  # is second turn?
-        if cond_1 & cond_2:
+        cond_2 = self.__check_if_it_is_given_turn(2)  # is it second turn?
+
+        if cond_0 & cond_1 & cond_2:
             if self.__check_if_opponent_attacked_opposite_corners():
                 cross_fields_numbers = [2, 4, 6, 8]
                 random.shuffle(cross_fields_numbers)
