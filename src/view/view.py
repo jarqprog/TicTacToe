@@ -7,6 +7,9 @@ from tool.dataTools import DataTools
 
 class View():
 
+    LATENCY = 0.1
+    LATENCY_REDUCTOR = 0.85
+
     # import getch (avoid problem with windows/ubuntu):
     try:
         from msvcrt import getwch as getch
@@ -61,19 +64,20 @@ class View():
                 should_continue = False
         return user_input
 
-    def animate_string(self, text, latency=0.1):
+    def animate_string(self, text):
         """
         Display string using pseudo-animating technique.
 
         speed: determine "animating" speed (float), default: 0.1
         string: string text to display
         """
+        latency = self.LATENCY
         text = self.empty_lines + self.double_tab + text
         for char in text:
             sys.stdout.write("%s" % char)
             sys.stdout.flush()
             time.sleep(latency)
-            latency = latency * 0.9
+            latency = latency * self.LATENCY_REDUCTOR
 
     def clear_screen(self):
         """Clear screen - universal for ubuntu/windows platform."""
@@ -91,14 +95,15 @@ class View():
         for element in collection:
             print(self.double_tab + element)
 
-    def display_collection_with_animate_strings(self, collection, latency=0.1):
+    def display_collection_with_animate_strings(self, collection):
+        latency = self.LATENCY
         self.display_empty_lines()
         to_display = "\n".join(collection)
         for char in to_display:
             sys.stdout.write("%s" % char)
             sys.stdout.flush()
             time.sleep(latency)
-            latency = latency * 0.9
+            latency = latency * self.LATENCY_REDUCTOR
 
     def display_enumerated_collection_elements(self, collection):
         self.display_empty_lines()
