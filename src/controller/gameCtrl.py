@@ -47,10 +47,11 @@ class GameCtrl():
         self.round_counter = 1
         self.turn_counter = 1
 
-        if (self.mode == "single player"):
+        if self.mode == "single player":
             self.__setup_single_player_mode()
         else:
             self.__setup_multiplayer_mode()
+        self.__setup_players_controllers()
         self.__create_game()
         self.__generate_order_of_players()
 
@@ -107,8 +108,8 @@ class GameCtrl():
         self.view.display_message(str(player_1) + ": " + str(player_1.get_score()))
         self.view.display_message(str(player_2) + ": " + str(player_2.get_score()))
         self.view.display_message_in_next_line("Current round:    " + str(self.round_counter))
-        self.view.display_message("Current turn:    " + str(self.turn_counter))
-        self.view.display_message(self.current_player.get_name() + "'s moving...")
+        self.view.display_message("Current turn:     " + str(self.turn_counter))
+        self.view.display_message_in_next_line(self.current_player.get_name() + "'s moving...")
         self.view.display_message_in_next_line(str(self.board))
 
     def __execute_mode_choice(self):
@@ -136,6 +137,9 @@ class GameCtrl():
         self.view.animate_string("Player created! - " + str(self.player_2_ctrl.get_player()))
         self.view.execute_pause()
 
+    def __setup_players_controllers(self):
+        self.__set_player_ctrls([self.player_1_ctrl, self.player_2_ctrl])
+
     def __create_game(self):
         self.game = Game(
                             self.player_1_ctrl.get_player(),
@@ -143,16 +147,31 @@ class GameCtrl():
                             self.board)
 
     def __generate_order_of_players(self):
+
         self.view.clear_screen()
-        self.view.animate_string("randomly chosen movement order:")
-        self.player_ctrls = [self.player_1_ctrl, self.player_2_ctrl]
-        self.__set_players_symbols()
-        random.shuffle(self.player_ctrls)
+
+        if self.round_counter < 2:  # beginning of the game
+            text_to_display = "randomly chosen movement order:"
+            self.__shuffle_players()
+
+        else:
+            text_to_display = "movement order:"
+            self.__swap_players()
+
         __players = [
                         self.player_ctrls[0].get_player(),
                         self.player_ctrls[1].get_player()]
+
+        self.__set_players_symbols()
+        self.view.animate_string(text_to_display)
         self.view.display_enumerated_collection_elements(__players)
         self.view.execute_pause()
+
+    def __shuffle_players(self):
+        random.shuffle(self.player_ctrls)
+
+    def __swap_players(self):
+        self.__set_player_ctrls([self.player_ctrls[1], self.player_ctrls[0]])
 
     def __set_players_symbols(self):
         self.player_ctrls[0].get_player().set_symbol("x")
@@ -170,6 +189,7 @@ class GameCtrl():
     def __check_if_restart_game(self):
         message = "Press 'r' to restart or any other key to quit game: "
         user_choice = self.view.get_text_from_user(message)
+
         if user_choice.lower() == "r":
             return True
 
@@ -182,6 +202,5 @@ class GameCtrl():
         self.checker = ResultChecker(self.board)
         self.player_1_ctrl.set_board(self.board)
         self.player_2_ctrl.set_board(self.board)
-        self.__set_player_ctrls([self.player_1_ctrl, self.player_2_ctrl])
         self.__generate_order_of_players()
         self.__create_game()
