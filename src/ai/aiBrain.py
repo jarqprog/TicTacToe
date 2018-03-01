@@ -8,10 +8,11 @@ class AiBrain(ABC):
 
     MIDDLE_FIELD_NUMBER = 5
 
+    # use it to limit the availability of given procedure (method) for ai
     EASY_ACTION_FACTOR = 1
     NORMAL_ACTION_FACTOR = 10
     SMART_ACTION_FACTOR = 20
-    BRILLIANT_ACTION_FACTOR = 60
+    BRILLIANT_ACTION_FACTOR = 50
 
     #  use it to balance ai 'intelligence' level:
     LOW_INTELLIGENCE_LVL = 30

@@ -13,12 +13,13 @@ class Root():
         self.game_ctrl = None
 
     def run_app(self):
+        self.view.maximize_console()
         self.execute_intro()
         self.execute_game()
         self.execute_outro()
 
     def execute_main_menu(self):
-        pass
+        pass  # to implement
 
     def execute_game(self):
         self.game_ctrl = GameCtrl()
